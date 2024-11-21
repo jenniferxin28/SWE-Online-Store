@@ -2,6 +2,44 @@ const express = require('express');
 const db = require('../config/db');
 const router = express.Router();
 
+const requireLogin = (req, res, next) => {
+  if (!req.session.loggedIn) {
+    return res.redirect('/users/login'); // redirect to login
+  }
+  next();
+};
+// profile page (protected)
+router.get('/profile', requireLogin, (req, res) => {
+  res.render('profile', { username: req.session.username });
+});
+
+// cart page (protected)
+router.get('/cart', requireLogin, (req, res) => {
+  const userID = req.session.userID;
+
+  const query = `
+    SELECT Product.productName, Product.price, ShoppingCartContains.quantity
+    FROM ShoppingCart
+    JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
+    JOIN Product ON ShoppingCartContains.productID = Product.productID
+    WHERE ShoppingCart.userID = ?`;
+
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    res.render('cart', {
+      username: req.session.username,
+      cartItems: results 
+    });
+  });
+});
+
+
+
+
 router.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
@@ -9,22 +47,37 @@ router.get('/login', (req, res) => {
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  // user validations
-  const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
+
+  const query = 'SELECT * FROM User WHERE username = ? AND password = ?';
   db.query(query, [username, password], (err, results) => {
     if (err) {
       console.error('Database error:', err);
-      res.render('login', { error: 'An error occurred. Please try again later.' });
-    } else if (results.length > 0) {
-      res.redirect('/users/profile');
+      return res.render('login', { error: 'An error occurred. Please try again.' });
+    }
+
+    if (results.length > 0) {
+      // successful
+      req.session.loggedIn = true;
+      req.session.username = results[0].username;
+      req.session.userID = results[0].userID;
+      return res.redirect('/');
     } else {
-      res.render('login', { error: 'Invalid username or password' });
+      // fail
+      return res.render('login', { error: 'Invalid username or password.' });
     }
   });
 });
-
-router.get('/profile', (req, res) => {
-  res.render('profile', { username: 'user' });
+router.get('/logout', (req, res) => {
+  // destory session
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).send('Error logging out. Please try again.');
+    }
+    // redirect to home
+    res.redirect('/');
+  });
 });
 
 module.exports = router;
+

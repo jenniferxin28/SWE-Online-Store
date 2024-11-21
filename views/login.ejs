@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <%- include('../components/header') %>
 </head>
 <body>
-  <h1>Login Page</h1>
-  <form action="/users/login" method="POST">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username">
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password">
-    <button type="submit">Login</button>
-  </form>
+  <div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card p-4 shadow-lg" style="width: 100%; max-width: 400px;">
+        <h2 class="text-center mb-4">Login</h2>
+        <form action="/users/login" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="password" required>
+            </div>
+
+            <% if (error) { %>
+                <div class="alert alert-warning mt-3">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3" name="login">Sign In</button>
+        </form>
+    </div>
+  </div>
 </body>
 </html>

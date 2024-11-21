@@ -2,5 +2,46 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 20px;
-  }
+}
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.navbar-container {
+  background-color: #cce5ff; 
+  width: 100vw; 
+  position: fixed; 
+  top: 0;
+  left: 0; 
+  z-index: 1030; 
+}
+
+.nav-link {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333; 
+  margin-left: 15px;
+}
+
+.nav-link:hover {
+  color: #0056b3; 
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+body {
+  padding-top: 70px; 
+}
+
+
   

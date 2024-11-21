@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../components/header') %>
+</head>
+<body>
+  <%- include('../components/navbar') %>
+  <main class="container mt-5">
+    <h1>Shopping Cart</h1>
+    <p>Welcome, <%= username %>! Here is your shopping cart:</p>
+
+    <!-- show cart items -->
+    <ul>
+        <% cartItems.forEach(item => { %>
+          <li><%= item.productName %> - $<%= item.price %> x <%= item.quantity %></li>
+        <% }) %>
+    </ul>
+
+    <a href="/" class="btn btn-primary mt-4">Continue Shopping</a>
+  </main>
+</body>
+</html>
