@@ -89,7 +89,8 @@ SET @last_user_id = LAST_INSERT_ID();
 INSERT INTO Admin (adminID) VALUES (@last_user_id);
 INSERT INTO Product (productName, description, category, price, stock, vipRequirement, sizeOptions) VALUES
 ('Poster A', 'Description for Product A', 'Prints', 10.00, 50, 1, 'Small, Medium, Large'),
-('Poster B', 'Description for Product B', 'Prints', 15.00, 30, 3, 'One Size');
+('Poster B', 'Description for Product B', 'Prints', 15.00, 30, 3, 'One Size'),
+('T shirt A', 'Description for Product C', 'Prints', 20.00, 50, 1, 'Small, Medium, Large');
 
 -- shopping cart for user 1
 INSERT INTO ShoppingCart (userID, totalPrice) VALUES
@@ -105,7 +106,9 @@ INSERT INTO ShoppingCartContains (cartID, productID, quantity) VALUES
 -- review inserts
 INSERT INTO Review (userID, productID, rating, comment) VALUES
 (1, 1, 5, 'Great poster! Really liked the quality.'), -- poster A - user1
-(2, 2, 4, 'Good print, but delivery was slow.'); -- poster B  - user2
+(1, 1, 4, 'Great, but the edges were bent :('),
+(2, 2, 4, 'Good print, but delivery was slow.'), -- poster B  - user2
+(1, 2, 3, 'Arrived 2 weeks late.');
 
 
 

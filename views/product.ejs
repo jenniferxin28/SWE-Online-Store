@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../components/header') %>
+</head>
+<body>
+  <%- include('../components/navbar') %>
+  <main class="container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <img 
+          src="/media/<%= product.productName %>.png" 
+          alt="<%= product.productName %>" 
+          class="img-fluid">
+      </div>
+      <div class="col-md-6">
+        <h1><%= product.productName %></h1>
+        <p class="text-muted"><%= product.description %></p>
+        <p><strong>Price: $<%= product.price.toFixed(2) %></strong></p>
+        <p>
+            <strong>Average Rating:</strong>
+            <span>
+                <% for (let i = 1; i <= 5; i++) { %>
+                <% if (i <= Math.floor(averageRating)) { %>
+                    <!-- Full star -->
+                    <i class="fas fa-star text-warning"></i>
+                <% } else if (i === Math.ceil(averageRating) && averageRating % 1 !== 0) { %>
+                    <!-- Half star -->
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                <% } else { %>
+                    <!-- Empty star -->
+                    <i class="far fa-star text-warning"></i>
+                <% } %>
+                <% } %>
+                (<%= reviewCount %> reviews)
+            </span>
+        </p>          
+        <button 
+        class="btn <%= loggedIn ? 'btn-primary' : 'btn-secondary' %>" 
+        <%= loggedIn ? '' : 'disabled' %>
+        >
+        <%= loggedIn ? 'Add to Cart' : 'Login to Purchase' %>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-5">
+      <h3>Customer Reviews</h3>
+      <% if (reviews.length > 0) { %>
+        <% reviews.forEach(review => { %>
+          <div class="border-bottom pb-3 mb-3">
+            <p><strong>Rating:</strong>
+              <% for (let i = 1; i <= 5; i++) { %>
+                <% if (i <= review.rating) { %>
+                  <i class="fas fa-star text-warning"></i>
+                <% } else { %>
+                  <i class="far fa-star text-warning"></i>
+                <% } %>
+              <% } %>
+            </p>
+            <p><strong>Comment:</strong> <%= review.comment %></p>
+            <p class="text-muted"><small>Reviewed on <%= review.date.toDateString() %></small></p>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No reviews yet. Be the first to review this product!</p>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

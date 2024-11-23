@@ -1,5 +1,5 @@
 <div class="navbar-container">
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg pe-5">
       <div class="container-fluid">
         <!-- Store Name -->
         <a class="navbar-brand" href="/">SWE Online Store</a>
@@ -8,7 +8,7 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
+              <a class="nav-link" href="/"><i class="fas fa-home"></i></a>
             </li>
           </ul>
         </div>
@@ -18,8 +18,8 @@
             <% if (!loggedIn) { %>
             <a class="nav-link" href="/users/login">Login</a>
             <% } else { %>
-            <a class="nav-link" href="/users/profile"><%= username %>'s Profile</a>
-            <a class="nav-link" href="/users/cart">Shopping Cart</a>
+            <a class="nav-link" href="/users/profile" title="Profile"><i class="fas fa-user"></i></a>
+            <a class="nav-link" href="/users/cart" title="Shopping Cart"><i class="fas fa-shopping-cart"></i></a>
             <a class="nav-link" href="/users/logout">Logout</a>
             <% } %>
         </div>

@@ -5,9 +5,32 @@
 </head>
 <body>
   <%- include('../components/navbar') %>
-  <main>
-    <h1>Welcome to SWE Online Store</h1>
-    <p>TODO: create list of products (3x3 grid)</p>
+  <main class="container mt-5">
+    <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
+    <div class="row">
+      <% products.forEach(product => { %>
+        <div class="col-md-4 mb-4">
+          <a href="/product/<%= product.productID %>" class="text-decoration-none">
+            <div class="card h-100 shadow-sm">
+              <!-- Image -->
+              <img 
+                src="/media/<%= product.productName %>.png" 
+                class="card-img-top" 
+                alt="<%= product.productName %>" 
+                style="object-fit: cover; height: 200px;">
+
+              <div class="card-body text-center">
+                <!-- Product Details -->
+                <h5 class="card-title"><%= product.productName %></h5>
+                <p class="card-text text-muted"><%= product.description %></p>
+                <p class="card-text"><strong>$<%= product.price.toFixed(2) %></strong></p>
+              </div>
+            </div>
+          </a>
+        </div>
+      <% }); %>
+    </div>
   </main>
 </body>
 </html>
+
