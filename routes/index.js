@@ -23,43 +23,65 @@ router.get('/', (req, res) => {
 
 router.get('/product/:id', (req, res) => {
   const productID = req.params.id;
+
   // prod details
   const productQuery = 'SELECT * FROM Product WHERE productID = ?';
   db.query(productQuery, [productID], (err, productResults) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Internal Server Error');
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
 
     if (productResults.length === 0) {
-      return res.status(404).send('Product not found');
+      const errorResponse = { error: 'Product not found' };
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(404).json(errorResponse); // return JSON for API clients
+      } else {
+        return res.status(404).render('error', { error: errorResponse.error }); // html for browsers
+      }
     }
-    // prod reviews
+
     const product = productResults[0];
+
+    // query to fetch product reviews
     const reviewQuery = 'SELECT * FROM Review WHERE productID = ?';
     db.query(reviewQuery, [productID], (err, reviewResults) => {
       if (err) {
         console.error('Database error:', err);
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
+
       const reviews = reviewResults;
-      // calc avg
       const averageRating =
         reviews.length > 0
           ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
           : 0;
 
-      res.render('product', {
-        product,
-        reviews,
-        averageRating,
-        reviewCount: reviews.length,
-        loggedIn: req.session.loggedIn || false,
-        isAdmin: req.session.isAdmin || false, // Pass admin status to the view
-      });
+      // handle both
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        // return JSON response for POSTMAN
+        return res.status(200).json({
+          product: {
+            ...product,
+            averageRating,
+            reviews,
+          },
+        });
+      } else {
+        // render HTML page
+        return res.render('product', {
+          product,
+          reviews,
+          averageRating,
+          reviewCount: reviews.length,
+          loggedIn: req.session.loggedIn || false,
+          isAdmin: req.session.isAdmin || false,
+        });
+      }
     });
   });
 });
+
 
 // Route to render the review form
 router.get('/product/:id/review', ensureRegisteredUser, (req, res) => {
