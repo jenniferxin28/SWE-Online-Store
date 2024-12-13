@@ -109,3 +109,19 @@ font-size: 14px;
   padding: 8px 10px;
 }
 }
+
+.cart-items {
+  list-style: none;
+  padding: 0;
+}
+.cart-item {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+.cart-item:last-child {
+  border-bottom: none;
+}
+.form-control.text-center {
+  text-align: center;
+  margin: 0 auto;
+}
