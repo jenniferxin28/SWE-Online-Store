@@ -110,5 +110,10 @@ INSERT INTO Review (userID, productID, rating, comment) VALUES
 (2, 2, 4, 'Good print, but delivery was slow.'), -- poster B  - user2
 (1, 2, 3, 'Arrived 2 weeks late.');
 
+-- sample inserts for order table
+INSERT INTO OrderTable (cartID, status, orderDate) VALUES
+(1, 'Pending', '2024-12-01 10:30:00');
+
+
 
 
