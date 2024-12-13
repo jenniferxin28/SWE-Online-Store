@@ -10,8 +10,46 @@ const requireLogin = (req, res, next) => {
 };
 // profile page (protected)
 router.get('/profile', requireLogin, (req, res) => {
-  res.render('profile', { username: req.session.username });
+  const userID = req.session.userID;
+  // const insertOrderQuery = `
+  //   INSERT INTO OrderTable (cartID, status)
+  //   SELECT cartID, 'Pending'
+  //   FROM ShoppingCart
+  //   WHERE userID = ?;
+  // `;
+  // db.query(insertOrderQuery, [userID], (err, result) => {
+  //   if (err) {
+  //     console.error('Error creating order:', err);
+  //     return res.status(500).send('Failed to create order');
+  //   }
+  const query = `
+    SELECT 
+      OrderTable.orderID,
+      OrderTable.orderDate,
+      OrderTable.status,
+      Product.productName,
+      Product.price,
+      ShoppingCartContains.quantity
+    FROM OrderTable
+    JOIN ShoppingCart ON OrderTable.cartID = ShoppingCart.cartID
+    JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
+    JOIN Product ON ShoppingCartContains.productID = Product.productID
+    WHERE ShoppingCart.userID = ?`;
+
+  db.query(query, [userID], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    res.render('profile', {
+      username: req.session.username,
+      orders: results 
+    });
+  });
 });
+//});
+
 
 // cart page (protected)
 router.get('/cart', requireLogin, (req, res) => {
@@ -20,6 +58,7 @@ router.get('/cart', requireLogin, (req, res) => {
   const query = `
     SELECT Product.productName, Product.price, ShoppingCartContains.quantity
     FROM ShoppingCart
+    
     JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
     JOIN Product ON ShoppingCartContains.productID = Product.productID
     WHERE ShoppingCart.userID = ?`;

@@ -2,10 +2,47 @@
 <html lang="en">
 <head>
   <%- include('../components/header') %>
+  <link rel="stylesheet" href="/css/styles.css"> <!-- Include your CSS -->
 </head>
 <body>
   <%- include('../components/navbar') %>
-  <h1>Welcome, <%= username %></h1>
-  <p>This is your account page.</p>
+  <div class="container">
+    <h1>Welcome, <%= username %></h1>
+    <p>This is your account page.</p>
+
+    <h2>Your Orders</h2>
+    <% if (orders.length > 0) { %>
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Item</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(order => { %>
+            <tr>
+              <td><%= order.orderID %></td>
+              <td><%= order.productName ? order.productName : 'No items' %></td>
+              <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+              <td><%= order.status %></td>
+              <td>
+                <% if (order.status === 'Pending') { %>
+                  <button class="btn-cancel">Cancel</button>
+                <% } else { %>
+                  <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>You have no orders at the moment.</p>
+    <% } %>
+  </div>
 </body>
 </html>
