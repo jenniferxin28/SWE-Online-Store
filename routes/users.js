@@ -56,9 +56,8 @@ router.get('/cart', requireLogin, (req, res) => {
   const userID = req.session.userID;
 
   const query = `
-    SELECT Product.productName, Product.price, ShoppingCartContains.quantity
+    SELECT Product.productID, Product.productName, Product.price, ShoppingCartContains.quantity
     FROM ShoppingCart
-    
     JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
     JOIN Product ON ShoppingCartContains.productID = Product.productID
     WHERE ShoppingCart.userID = ?`;
@@ -69,13 +68,53 @@ router.get('/cart', requireLogin, (req, res) => {
       return res.status(500).send('Internal Server Error');
     }
 
+    // Calculate total cost
+    const totalCost = results.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
     res.render('cart', {
       username: req.session.username,
-      cartItems: results 
+      cartItems: results,
+      totalCost // Pass the total cost to the template
     });
   });
 });
 
+
+router.post('/cart/add', requireLogin, (req, res) => {
+  const { productID, quantity } = req.body;
+  const userID = req.session.userID;
+
+  const addQuery = `
+    INSERT INTO ShoppingCartContains (cartID, productID, quantity)
+    VALUES ((SELECT cartID FROM ShoppingCart WHERE userID = ?), ?, ?)
+    ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`;
+
+  db.query(addQuery, [userID, productID, quantity], (err) => {
+    if (err) {
+      console.error('Error adding to cart:', err);
+      return res.status(500).send('Failed to add to cart');
+    }
+    res.redirect('/users/cart');
+  });
+});
+
+router.post('/cart/remove', requireLogin, (req, res) => {
+  const { productID } = req.body;
+  const userID = req.session.userID;
+
+  const removeQuery = `
+    DELETE FROM ShoppingCartContains
+    WHERE cartID = (SELECT cartID FROM ShoppingCart WHERE userID = ?)
+    AND productID = ?`;
+
+  db.query(removeQuery, [userID, productID], (err) => {
+    if (err) {
+      console.error('Error removing from cart:', err);
+      return res.status(500).send('Failed to remove item');
+    }
+    res.redirect('/users/cart');
+  });
+});
 
 
 
