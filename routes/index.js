@@ -11,15 +11,37 @@ const ensureRegisteredUser = (req, res, next) => {
 };
 
 router.get('/', (req, res) => {
-  const query = 'SELECT * FROM Product';
-  db.query(query, (err, results) => {
+  const category = req.query.category;
+  let query = 'SELECT * FROM Product';
+  const queryParams = [];
+
+  if (category) {
+    query += ' WHERE category = ?';
+    queryParams.push(category);
+  }
+
+  db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Internal Server Error');
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        return res.status(500).render('error', { error: 'Internal Server Error' });
+      }
     }
-    res.render('home', { products: results });
+
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      res.status(200).json({
+        category: category || 'All',
+        products: results,
+      });
+    } else {
+      res.render('home', { products: results });
+    }
   });
 });
+
+
 
 router.get('/product/:id', (req, res) => {
   const productID = req.params.id;

@@ -17,6 +17,8 @@
           <tr>
             <th>Order ID</th>
             <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
@@ -27,6 +29,8 @@
             <tr>
               <td><%= order.orderID %></td>
               <td><%= order.productName ? order.productName : 'No items' %></td>
+              <td><%= order.quantity ? order.quantity : 'No items' %></td>
+              <td>$<%= order.price ? order.price : 'No items' %></td>
               <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
               <td><%= order.status %></td>
               <td>

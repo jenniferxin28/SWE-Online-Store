@@ -11,30 +11,20 @@ const requireLogin = (req, res, next) => {
 // profile page (protected)
 router.get('/profile', requireLogin, (req, res) => {
   const userID = req.session.userID;
-  // const insertOrderQuery = `
-  //   INSERT INTO OrderTable (cartID, status)
-  //   SELECT cartID, 'Pending'
-  //   FROM ShoppingCart
-  //   WHERE userID = ?;
-  // `;
-  // db.query(insertOrderQuery, [userID], (err, result) => {
-  //   if (err) {
-  //     console.error('Error creating order:', err);
-  //     return res.status(500).send('Failed to create order');
-  //   }
+
   const query = `
     SELECT 
       OrderTable.orderID,
       OrderTable.orderDate,
       OrderTable.status,
       Product.productName,
-      Product.price,
-      ShoppingCartContains.quantity
+      OrderDetails.quantity,
+      OrderDetails.price
     FROM OrderTable
-    JOIN ShoppingCart ON OrderTable.cartID = ShoppingCart.cartID
-    JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
-    JOIN Product ON ShoppingCartContains.productID = Product.productID
-    WHERE ShoppingCart.userID = ?`;
+    JOIN OrderDetails ON OrderTable.orderID = OrderDetails.orderID
+    JOIN Product ON OrderDetails.productID = Product.productID
+    WHERE OrderTable.cartID = (SELECT cartID FROM ShoppingCart WHERE userID = ?)
+    ORDER BY OrderTable.orderDate DESC`;
 
   db.query(query, [userID], (err, results) => {
     if (err) {
@@ -48,7 +38,7 @@ router.get('/profile', requireLogin, (req, res) => {
     });
   });
 });
-//});
+
 
 
 // cart page (protected)
@@ -113,6 +103,75 @@ router.post('/cart/remove', requireLogin, (req, res) => {
       return res.status(500).send('Failed to remove item');
     }
     res.redirect('/users/cart');
+  });
+});
+// place orders
+router.post('/cart/place-order', requireLogin, (req, res) => {
+  const userID = req.session.userID;
+
+
+  const cartQuery = `
+    SELECT Product.productID, Product.price, ShoppingCartContains.quantity
+    FROM ShoppingCart
+    JOIN ShoppingCartContains ON ShoppingCart.cartID = ShoppingCartContains.cartID
+    JOIN Product ON ShoppingCartContains.productID = Product.productID
+    WHERE ShoppingCart.userID = ?`;
+
+  db.query(cartQuery, [userID], (err, cartItems) => {
+    if (err) {
+      console.error('Error fetching cart items:', err);
+      return res.status(500).send('Failed to place order');
+    }
+
+    if (cartItems.length === 0) {
+      return res.status(400).send('Your cart is empty!');
+    }
+
+    const insertOrderQuery = `
+      INSERT INTO OrderTable (cartID, status, orderDate)
+      VALUES ((SELECT cartID FROM ShoppingCart WHERE userID = ?), 'Pending', NOW())`;
+    
+    db.query(insertOrderQuery, [userID], (err, result) => {
+      if (err) {
+        console.error('Error creating order:', err);
+        return res.status(500).send('Failed to place order');
+      }
+
+      const orderID = result.insertId; 
+
+      // insert products into OrderDetails
+      const insertOrderDetailsQuery = `
+        INSERT INTO OrderDetails (orderID, productID, quantity, price)
+        VALUES ?`;
+
+      const orderDetails = cartItems.map(item => [
+        orderID,
+        item.productID,
+        item.quantity,
+        item.price
+      ]);
+
+      db.query(insertOrderDetailsQuery, [orderDetails], (err) => {
+        if (err) {
+          console.error('Error creating order details:', err);
+          return res.status(500).send('Failed to place order');
+        }
+
+        // clear the cart
+        const clearCartQuery = `
+          DELETE FROM ShoppingCartContains
+          WHERE cartID = (SELECT cartID FROM ShoppingCart WHERE userID = ?)`;
+
+        db.query(clearCartQuery, [userID], (err) => {
+          if (err) {
+            console.error('Error clearing cart:', err);
+            return res.status(500).send('Failed to clear cart');
+          }
+
+          res.redirect('/users/profile'); 
+        });
+      });
+    });
   });
 });
 

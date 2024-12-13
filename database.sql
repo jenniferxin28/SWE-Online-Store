@@ -63,6 +63,15 @@ CREATE TABLE OrderTable (
     orderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cartID) REFERENCES ShoppingCart(cartID) ON DELETE CASCADE
 );
+CREATE TABLE OrderDetails (
+    orderDetailID INT AUTO_INCREMENT PRIMARY KEY,
+    orderID INT NOT NULL,
+    productID INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL, -- Store product price at the time of order
+    FOREIGN KEY (orderID) REFERENCES OrderTable(orderID) ON DELETE CASCADE,
+    FOREIGN KEY (productID) REFERENCES Product(productID) ON DELETE CASCADE
+);
 
 -- Create the Review table
 CREATE TABLE Review (
@@ -91,6 +100,12 @@ INSERT INTO Product (productName, description, category, price, stock, vipRequir
 ('Poster A', 'Description for Product A', 'Prints', 10.00, 50, 1, 'Small, Medium, Large'),
 ('Poster B', 'Description for Product B', 'Prints', 15.00, 30, 3, 'One Size'),
 ('T shirt A', 'Description for Product C', 'Prints', 20.00, 50, 1, 'Small, Medium, Large');
+INSERT INTO Product (productName, description, category, price, stock, vipRequirement, sizeOptions)
+VALUES
+('CD 1', 'First CD with amazing content.', 'CD', 15.00, 100, 1, NULL),
+('CD 2', 'Second CD with great content.', 'CD', 20.00, 50, 2, NULL),
+('CD 3', 'Third CD with exclusive content.', 'CD', 25.00, 30, 3, NULL);
+
 
 -- shopping cart for user 1
 INSERT INTO ShoppingCart (userID, totalPrice) VALUES
@@ -110,9 +125,7 @@ INSERT INTO Review (userID, productID, rating, comment) VALUES
 (2, 2, 4, 'Good print, but delivery was slow.'), -- poster B  - user2
 (1, 2, 3, 'Arrived 2 weeks late.');
 
--- sample inserts for order table
-INSERT INTO OrderTable (cartID, status, orderDate) VALUES
-(1, 'Pending', '2024-12-01 10:30:00');
+
 
 
 
