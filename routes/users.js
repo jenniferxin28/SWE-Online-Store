@@ -237,6 +237,53 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
   });
 });
+//register new users
+router.get('/register', (req, res) => {
+  res.render('register', { error: null });
+});
+router.post('/register', (req, res) => {
+  const { username, password, email } = req.body;
+
+  if (!username || !password || !email) {
+    return res.render('register', { error: 'All fields are required.' });
+  }
+
+  // check user name
+  const checkQuery = 'SELECT * FROM User WHERE username = ?';
+  db.query(checkQuery, [username], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.render('register', { error: 'An error occurred. Please try again.' });
+    }
+
+    if (results.length > 0) {
+      return res.render('register', { error: 'Username already taken. Please choose another.' });
+    }
+
+    // insert into database
+    const insertQuery = 'INSERT INTO User (username, password, email) VALUES (?, ?, ?)';
+    db.query(insertQuery, [username, password, email], (err, result) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.render('register', { error: 'An error occurred. Please try again.' });
+      }
+
+      const userID = result.insertId;
+
+      // create a shopping cart for the new user
+      const cartQuery = 'INSERT INTO ShoppingCart (userID, totalPrice) VALUES (?, 0.00)';
+      db.query(cartQuery, [userID], (err) => {
+        if (err) {
+          console.error('Error creating shopping cart:', err);
+          return res.render('register', { error: 'An error occurred. Please try again.' });
+        }
+
+        res.redirect('/users/login');
+      });
+    });
+  });
+});
+
 
 module.exports = router;
 
