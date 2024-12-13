@@ -176,24 +176,28 @@ router.post('/cart/place-order', requireLogin, (req, res) => {
 });
 
 
-
+// login, support api clients
 router.get('/login', (req, res) => {
+  if (req.headers.accept && req.headers.accept.includes('application/json')) {
+    return res.status(200).json({ message: 'Send POST request to login' });
+  }
   res.render('login', { error: null });
 });
 
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-
   const query = 'SELECT * FROM User WHERE username = ? AND password = ?';
   db.query(query, [username, password], (err, results) => {
     if (err) {
       console.error('Database error:', err);
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
       return res.render('login', { error: 'An error occurred. Please try again.' });
     }
 
     if (results.length > 0) {
-      // successful
       req.session.loggedIn = true;
       req.session.username = results[0].username;
       req.session.userID = results[0].userID;
@@ -201,18 +205,27 @@ router.post('/login', (req, res) => {
       db.query(adminQuery, [results[0].userID], (err, adminResults) => {
         if (err) {
           console.error('Database error:', err);
+          if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return res.status(500).json({ error: 'Internal Server Error' });
+          }
           return res.status(500).send('Internal Server Error');
         }
 
         req.session.isAdmin = adminResults.length > 0;
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+          return res.status(200).json({ message: 'Login successful', username: req.session.username });
+        }
         return res.redirect('/');
       });
     } else {
-      // fail
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(401).json({ error: 'Invalid username or password' });
+      }
       return res.render('login', { error: 'Invalid username or password.' });
     }
   });
 });
+
 router.get('/logout', (req, res) => {
   // destory session
   req.session.destroy(err => {

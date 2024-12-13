@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
         return res.status(500).render('error', { error: 'Internal Server Error' });
       }
     }
-
+    // support api clients too
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
       res.status(200).json({
         category: category || 'All',
@@ -113,18 +113,29 @@ router.get('/product/:id/review', ensureRegisteredUser, (req, res) => {
   db.query(productQuery, [productID], (err, productResults) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Internal Server Error');
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        return res.status(500).send('Internal Server Error');
+      }
     }
 
     if (productResults.length === 0) {
-      return res.status(404).send('Product not found');
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(404).json({ error: 'Product not found' });
+      } else {
+        return res.status(404).send('Product not found');
+      }
     }
 
     const product = productResults[0];
-    res.render('review', { product, loggedIn: req.session.loggedIn || false });
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      res.status(200).json({ product });
+    } else {
+      res.render('review', { product, loggedIn: req.session.loggedIn || false });
+    }
   });
 });
-
 // route for review submissions
 router.post('/product/:id/review', ensureRegisteredUser, (req, res) => {
   const { rating, comment } = req.body;
@@ -135,10 +146,20 @@ router.post('/product/:id/review', ensureRegisteredUser, (req, res) => {
   db.query(query, [userID, productID, rating, comment], (err, results) => {
     if (err) {
       console.error('Database error:', err);
-      return res.status(500).send('Internal Server Error');
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        return res.status(500).send('Internal Server Error');
+      }
     }
-    res.redirect(`/product/${productID}`); 
+
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      res.status(201).json({ message: 'Review submitted successfully' });
+    } else {
+      res.redirect(`/product/${productID}`);
+    }
   });
 });
+
 
 module.exports = router;
