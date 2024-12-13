@@ -30,6 +30,41 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+// Delete Route
+app.post('/delete/:id', (req, res) => {
+  const productID = req.params.id;
+  const query = 'DELETE FROM Product WHERE productID = ?';
+
+  db.query(query, [productID], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Failed to delete product.');
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
+app.post('/add-product', (req, res) => {
+  const { productName, description, category, price, stock, vipRequirement, sizeOptions } = req.body;
+
+  const query = `
+    INSERT INTO Product (productName, description, category, price, stock, vipRequirement, sizeOptions)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [productName, description, category, parseFloat(price), parseInt(stock), parseInt(vipRequirement), sizeOptions];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Failed to add product.');
+    } else {
+      res.redirect('/'); // Redirect back to the product list
+    }
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

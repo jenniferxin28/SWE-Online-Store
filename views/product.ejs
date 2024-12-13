@@ -16,7 +16,7 @@
       <div class="col-md-6">
         <h1><%= product.productName %></h1>
         <p class="text-muted"><%= product.description %></p>
-        <p><strong>Price: $<%= product.price.toFixed(2) %></strong></p>
+        <p><strong>Price: $<%= product.price %></strong></p>
         <p>
             <strong>Average Rating:</strong>
             <span>
@@ -41,10 +41,8 @@
         >
         <%= loggedIn ? 'Add to Cart' : 'Login to Purchase' %>
         </button>
-
       </div>
     </div>
-
     <!-- Reviews Section -->
     <div class="mt-5">
       <h3>Customer Reviews</h3>

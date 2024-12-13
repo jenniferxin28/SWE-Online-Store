@@ -1,36 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('../components/header') %>
 </head>
+
 <body>
   <%- include('../components/navbar') %>
-  <main class="container mt-5">
-    <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
-    <div class="row">
-      <% products.forEach(product => { %>
-        <div class="col-md-4 mb-4">
-          <a href="/product/<%= product.productID %>" class="text-decoration-none">
-            <div class="card h-100 shadow-sm">
-              <!-- Image -->
-              <img 
-                src="/media/<%= product.productName %>.png" 
-                class="card-img-top" 
-                alt="<%= product.productName %>" 
-                style="object-fit: cover; height: 200px;">
+    <main class="container mt-5">
+      <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
+      <div class="row">
+        <% products.forEach(product=> { %>
+          <div class="col-md-4 mb-4">
+            <a href="/product/<%= product.productID %>" class="text-decoration-none">
+              <div class="card h-100 shadow-sm">
+                <!-- Image -->
+                <img src="/media/<%= product.productName %>.png" class="card-img-top" alt="<%= product.productName %>"
+                  style="object-fit: cover; height: 200px;">
 
-              <div class="card-body text-center">
-                <!-- Product Details -->
-                <h5 class="card-title"><%= product.productName %></h5>
-                <p class="card-text text-muted"><%= product.description %></p>
-                <p class="card-text"><strong>$<%= product.price.toFixed(2) %></strong></p>
+                <div class="card-body text-center">
+                  <!-- Product Details -->
+                  <h5 class="card-title">
+                    <%= product.productName %>
+                  </h5>
+                  <p class="card-text text-muted">
+                    <%= product.description %>
+                  </p>
+                  <p class="card-text"><strong>$<%= product.price %></strong></p>
+                </div>
+
+                <!-- Delete Button -->
+                <div style="<%= username!= "admin" ? "display: none;" : ""%>">
+                  <form action="/delete/<%= product.productID %>" method="POST">
+                    <button type="submit">Delete</button>
+                  </form>
+                </div>
+
               </div>
-            </div>
-          </a>
-        </div>
-      <% }); %>
-    </div>
-  </main>
-</body>
-</html>
+            </a>
+          </div>
+          <% }); %>
 
+            <!-- Add Product Form -->
+
+            <div style="<%= username!= "admin" ? "display: none;" : ""%>">
+
+              <h2>Add a New Product</h2>
+              <form action="/add-product" method="POST">
+                <label for="productName">Product Name:</label>
+                <input type="text" id="productName" name="productName" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" required>
+
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" required>
+
+                <label for="vipRequirement">VIP Requirement:</label>
+                <input type="text" id="vipRequirement" name="vipRequirement" value="1" required>
+
+                <label for="sizeOptions">Size Options:</label>
+                <input type="text" id="sizeOptions" name="sizeOptions">
+
+                <button type="submit">Add Product</button>
+              </form>
+            </div>
+
+      </div>
+    </main>
+</body>
+
+</html>
