@@ -67,7 +67,16 @@
       <% } else { %>
         <p>No reviews yet. Be the first to review this product!</p>
       <% } %>
+      <% if (loggedIn && !isAdmin) { %>
+        <!-- Review Button -->
+        <a href="/product/<%= product.productID %>/review" class="btn btn-primary mt-3">Write a Review</a>
+      <% } else if (loggedIn && isAdmin) { %>
+        <p class="text-warning mt-3">Admins cannot leave reviews.</p>
+      <% } else { %>
+        <p class="text-warning mt-3">Log in as a registered user to leave a review.</p>
+      <% } %>
     </div>
+    
   </main>
 </body>
 </html>

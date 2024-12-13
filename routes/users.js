@@ -99,7 +99,16 @@ router.post('/login', (req, res) => {
       req.session.loggedIn = true;
       req.session.username = results[0].username;
       req.session.userID = results[0].userID;
-      return res.redirect('/');
+      const adminQuery = 'SELECT * FROM Admin WHERE adminID = ?';
+      db.query(adminQuery, [results[0].userID], (err, adminResults) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        req.session.isAdmin = adminResults.length > 0;
+        return res.redirect('/');
+      });
     } else {
       // fail
       return res.render('login', { error: 'Invalid username or password.' });

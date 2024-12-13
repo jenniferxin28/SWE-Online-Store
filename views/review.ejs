@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../components/header') %>
+</head>
+<body>
+  <%- include('../components/navbar') %>
+  <main class="container mt-5">
+    <h1 class="mb-4">Write a Review for <%= product.productName %></h1>
+    <form action="/product/<%= product.productID %>/review" method="post">
+      <div class="mb-3">
+        <label for="rating" class="form-label">Rating</label>
+        <select name="rating" id="rating" class="form-select" required>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Terrible</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="comment" class="form-label">Comment</label>
+        <textarea name="comment" id="comment" rows="3" class="form-control" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Review</button>
+      <a href="/product/<%= product.productID %>" class="btn btn-secondary">Cancel</a>
+    </form>
+  </main>
+</body>
+</html>
