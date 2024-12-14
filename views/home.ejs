@@ -42,7 +42,7 @@
                 </div>
 
                 <!-- Delete Button -->
-                <div style="<%= !loggedIn ? "display: none;" : "" %>">
+                <div style="<%= !isAdmin ? "display: none;" : "" %>">
                   <form action="/delete/<%= product.productID %>" method="POST">
                     <button type="submit">Delete</button>
                   </form>
@@ -55,7 +55,7 @@
 
             <!-- Add Product Form -->
 
-            <div style="<%= !loggedIn ? "display: none;" : "" %>">
+            <div style="<%= !isAdmin ? "display: none;" : "" %>">
 
               <h2>Add a New Product</h2>
               <form action="/add-product" method="POST">

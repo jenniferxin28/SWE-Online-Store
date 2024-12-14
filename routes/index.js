@@ -10,6 +10,14 @@ const ensureRegisteredUser = (req, res, next) => {
   next();
 };
 
+// Middleware to ensure only admins can access
+const authorizeAdmin = (req, res, next) => {
+  if (!req.session.isAdmin) {
+    return res.status(403).send('Access denied. Admins only.');
+  }
+  next();
+};
+
 router.get('/', (req, res) => {
   const category = req.query.category;
   let query = 'SELECT * FROM Product';
@@ -158,6 +166,41 @@ router.post('/product/:id/review', ensureRegisteredUser, (req, res) => {
     } else {
       res.redirect(`/product/${productID}`);
     }
+  });
+});
+
+// Add product (Admins only)
+router.post('/add-product', authorizeAdmin,(req, res) => {
+  const { productName, description, category, price, stock, vipRequirement, sizeOptions } = req.body;
+
+  if (!productName || price == null || stock == null || vipRequirement == null) {
+    return res.status(400).send('Product name, price, stock, and VIP requirement are required.');
+  }
+
+  const query = `INSERT INTO Product (productName, description, category, price, stock, vipRequirement, sizeOptions) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const values = [productName, description, category, parseFloat(price), parseInt(stock), parseInt(vipRequirement), sizeOptions];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Failed to add product.');
+    }
+    res.redirect('/'); // Redirect back to the product list
+  });
+});
+
+// Delete product (Admins only)
+router.post('/delete/:id', authorizeAdmin, (req, res) => {
+  const productID = req.params.id;
+  const query = 'DELETE FROM Product WHERE productID = ?';
+
+  db.query(query, [productID], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Failed to delete product.');
+    }
+    res.redirect('/');
   });
 });
 
