@@ -6,8 +6,8 @@
 <body>
   <div class="container d-flex align-items-center justify-content-center min-vh-100">
     <div class="card p-4 shadow-lg" style="width: 100%; max-width: 400px;">
-        <h2 class="text-center mb-4">Login</h2>
-        <form action="/users/login" method="post">
+        <h2 class="text-center mb-4">Register</h2>
+        <form action="/users/register" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" class="form-control" name="username" id="username" required>
@@ -16,6 +16,10 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" name="password" id="password" required>
             </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email" required>
+            </div>
 
             <% if (error) { %>
                 <div class="alert alert-warning mt-3">
@@ -23,11 +27,7 @@
                 </div>
             <% } %>
 
-            <button type="submit" class="btn btn-primary w-100 mt-3" name="login">Sign In</button>
-            <!-- Link to Register -->
-            <p class="text-center mt-3">
-              Don't have an account? <a href="/users/register">Sign up here</a>
-            </p>
+            <button type="submit" class="btn btn-success w-100 mt-3" name="register">Sign Up</button>
         </form>
     </div>
   </div>

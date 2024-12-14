@@ -1,47 +1,127 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
 }
 html, body {
-  width: 100%;
-  overflow-x: hidden;
+width: 100%;
+overflow-x: hidden;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
 
 .navbar-container {
-  background-color: #cce5ff; 
-  width: 100vw; 
-  position: fixed; 
-  top: 0;
-  left: 0; 
-  z-index: 1030; 
+background-color: #cce5ff; 
+width: 100vw; 
+position: fixed; 
+top: 0;
+left: 0; 
+z-index: 1030; 
 }
 
 .nav-link {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333; 
-  margin-left: 15px;
+font-size: 16px;
+font-weight: 500;
+color: #333; 
+margin-left: 15px;
 }
 
 .nav-link:hover {
-  color: #0056b3; 
+color: #0056b3; 
 }
 
 .navbar-brand {
-  font-weight: bold;
-  font-size: 20px;
+font-weight: bold;
+font-size: 20px;
 }
 
 body {
-  padding-top: 70px; 
+padding-top: 70px; 
 }
 
+/* General Table Styling */
+.orders-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+background-color: #ffffff;
+border-radius: 8px;
+overflow: hidden;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  
+.orders-table thead {
+background-color: #007bff;
+color: #ffffff;
+font-weight: bold;
+}
+
+.orders-table th, .orders-table td {
+text-align: left;
+padding: 12px 15px;
+border-bottom: 1px solid #ddd;
+}
+
+.orders-table tr:nth-child(even) {
+background-color: #f9f9f9;
+}
+
+.orders-table tr:hover {
+background-color: #f1f1f1;
+}
+
+.orders-table th {
+text-align: center;
+}
+
+.orders-table td {
+text-align: center;
+}
+
+/* Cancel Button Styling */
+.btn-cancel {
+background-color: #dc3545;
+color: white;
+border: none;
+padding: 8px 12px;
+font-size: 14px;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.btn-cancel:hover {
+background-color: #c82333;
+}
+
+.text-muted {
+color: #6c757d;
+font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+.orders-table th, .orders-table td {
+  font-size: 14px;
+  padding: 8px 10px;
+}
+}
+
+.cart-items {
+  list-style: none;
+  padding: 0;
+}
+.cart-item {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+.cart-item:last-child {
+  border-bottom: none;
+}
+.form-control.text-center {
+  text-align: center;
+  margin: 0 auto;
+}

@@ -2,6 +2,49 @@
 <html lang="en">
 <head>
   <%- include('../components/header') %>
+  <style>
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-total {
+      margin-top: 20px;
+      text-align: right;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .remove-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background-color: #c82333;
+    }
+
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .cart-actions .btn {
+      flex: 0 0 auto;
+    }
+  </style>
 </head>
 <body>
   <%- include('../components/navbar') %>
@@ -9,14 +52,34 @@
     <h1>Shopping Cart</h1>
     <p>Welcome, <%= username %>! Here is your shopping cart:</p>
 
-    <!-- show cart items -->
-    <ul>
-        <% cartItems.forEach(item => { %>
-          <li><%= item.productName %> - $<%= item.price %> x <%= item.quantity %></li>
-        <% }) %>
-    </ul>
+    <!-- Cart items -->
+    <div>
+      <% let totalCost = 0; %>
+      <% cartItems.forEach(item => { %>
+        <% totalCost += item.price * item.quantity; %>
+        <div class="cart-item">
+          <span><%= item.productName %> - $<%= item.price %> x <%= item.quantity %></span>
+          <form action="/users/cart/remove" method="post">
+            <input type="hidden" name="productID" value="<%= item.productID %>">
+            <button type="submit" class="remove-btn">Remove</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
 
-    <a href="/" class="btn btn-primary mt-4">Continue Shopping</a>
+    <!-- Total cost -->
+    <div class="cart-total">
+      Total: $<%= totalCost.toFixed(2) %>
+    </div>
+
+    <!-- Actions: Place Order and Continue Shopping -->
+    <div class="cart-actions">
+      <form action="/users/cart/place-order" method="post">
+        <button type="submit" class="btn btn-success">Place Order</button>
+      </form>
+      <a href="/" class="btn btn-primary">Continue Shopping</a>
+    </div>
+
   </main>
 </body>
 </html>

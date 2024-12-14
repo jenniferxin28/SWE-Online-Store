@@ -9,6 +9,18 @@
   <%- include('../components/navbar') %>
     <main class="container mt-5">
       <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
+
+      <!-- Category Filter Links -->
+      <div class="text-center mb-4">
+        <a href="/" class="btn btn-link">All</a>
+        <span class="mx-2 font-weight-bold">/</span>
+        <a href="/?category=Prints" class="btn btn-link">Prints</a>
+        <span class="mx-2 font-weight-bold">/</span>
+        <a href="/?category=CD" class="btn btn-link">CD</a>
+      </div>
+
+
+      <!-- Product Grid -->
       <div class="row">
         <% products.forEach(product=> { %>
           <div class="col-md-4 mb-4">
@@ -30,7 +42,7 @@
                 </div>
 
                 <!-- Delete Button -->
-                <div style="<%= username!= "admin" ? "display: none;" : ""%>">
+                <div style="<%= !loggedIn ? "display: none;" : "" %>">
                   <form action="/delete/<%= product.productID %>" method="POST">
                     <button type="submit">Delete</button>
                   </form>
@@ -43,7 +55,7 @@
 
             <!-- Add Product Form -->
 
-            <div style="<%= username!= "admin" ? "display: none;" : ""%>">
+            <div style="<%= !loggedIn ? "display: none;" : "" %>">
 
               <h2>Add a New Product</h2>
               <form action="/add-product" method="POST">
@@ -75,5 +87,4 @@
       </div>
     </main>
 </body>
-
 </html>

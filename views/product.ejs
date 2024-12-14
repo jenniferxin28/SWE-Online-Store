@@ -35,12 +35,20 @@
                 (<%= reviewCount %> reviews)
             </span>
         </p>          
-        <button 
-        class="btn <%= loggedIn ? 'btn-primary' : 'btn-secondary' %>" 
-        <%= loggedIn ? '' : 'disabled' %>
-        >
-        <%= loggedIn ? 'Add to Cart' : 'Login to Purchase' %>
-        </button>
+        <% if (loggedIn) { %>
+          <form action="/users/cart/add" method="POST" class="d-inline">
+            <input type="hidden" name="productID" value="<%= product.productID %>">
+            <div class="d-flex flex-column align-items-center mb-3">
+              <label for="quantity" class="form-label">Quantity:</label>
+              <input type="number" id="quantity" name="quantity" min="1" value="1" class="form-control w-25 text-center">
+          </div>
+          
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+          </form>
+        <% } else { %>
+          <button class="btn btn-secondary" disabled>Login to Purchase</button>
+        <% } %>
+
       </div>
     </div>
     <!-- Reviews Section -->
@@ -65,7 +73,16 @@
       <% } else { %>
         <p>No reviews yet. Be the first to review this product!</p>
       <% } %>
+      <% if (loggedIn && !isAdmin) { %>
+        <!-- Review Button -->
+        <a href="/product/<%= product.productID %>/review" class="btn btn-primary mt-3">Write a Review</a>
+      <% } else if (loggedIn && isAdmin) { %>
+        <p class="text-warning mt-3">Admins cannot leave reviews.</p>
+      <% } else { %>
+        <p class="text-warning mt-3">Log in as a registered user to leave a review.</p>
+      <% } %>
     </div>
+    
   </main>
 </body>
 </html>
