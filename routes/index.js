@@ -10,9 +10,9 @@ const ensureRegisteredUser = (req, res, next) => {
   next();
 };
 
-// Middleware to ensure only admins can access
+// Middleware to ensure only admin access
 const authorizeAdmin = (req, res, next) => {
-  if (!req.session.isAdmin) {
+  if (!req.session.loggedIn || !req.session.isAdmin) {
     return res.status(403).send('Access denied. Admins only.');
   }
   next();
