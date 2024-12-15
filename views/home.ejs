@@ -44,7 +44,7 @@
                 <!-- Delete Button -->
                 <div style="<%= !isAdmin ? "display: none;" : "" %>">
                   <form action="/delete/<%= product.productID %>" method="POST">
-                    <button type="submit">Delete</button>
+                    <button class="btn-cancel mb-4" type="submit">Delete</button>
                   </form>
                 </div>
 
@@ -54,35 +54,62 @@
           <% }); %>
 
             <!-- Add Product Form -->
-
-            <div style="<%= !isAdmin ? "display: none;" : "" %>">
-
-              <h2>Add a New Product</h2>
-              <form action="/add-product" method="POST">
-                <label for="productName">Product Name:</label>
-                <input type="text" id="productName" name="productName" required>
-
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" required></textarea>
-
-                <label for="category">Category:</label>
-                <input type="text" id="category" name="category" required>
-
-                <label for="price">Price:</label>
-                <input type="number" id="price" name="price" step="0.01" required>
-
-                <label for="stock">Stock:</label>
-                <input type="number" id="stock" name="stock" required>
-
-                <label for="vipRequirement">VIP Requirement:</label>
-                <input type="text" id="vipRequirement" name="vipRequirement" value="1" required>
-
-                <label for="sizeOptions">Size Options:</label>
-                <input type="text" id="sizeOptions" name="sizeOptions">
-
-                <button type="submit">Add Product</button>
-              </form>
+            <div style="<%= !isAdmin ? 'display: none;' : '' %>" class="container mt-4">
+              <div class="row justify-content-center">
+                <div class="col-md-4">
+                  <h2 class="mb-4 text-center">Add a New Product</h2>
+                  <form action="/add-product" method="POST">
+                    <!-- Product Name -->
+                    <div class="form-group mb-3;">
+                      <label for="productName" class="form-label">Product Name:</label>
+                      <input class="form-control" type="text" id="productName" name="productName" required>
+                    </div>
+            
+                    <!-- Description -->
+                    <div class="form-group mb-3">
+                      <label for="description" class="form-label">Description:</label>
+                      <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                    </div>
+            
+                    <!-- Category -->
+                    <div class="form-group mb-3">
+                      <label for="category" class="form-label">Category:</label>
+                      <input class="form-control" type="text" id="category" name="category" required>
+                    </div>
+            
+                    <!-- Price -->
+                    <div class="form-group mb-3">
+                      <label for="price" class="form-label">Price:</label>
+                      <input class="form-control" type="number" id="price" name="price" step="0.01" required>
+                    </div>
+            
+                    <!-- Stock -->
+                    <div class="form-group mb-3">
+                      <label for="stock" class="form-label">Stock:</label>
+                      <input class="form-control" type="number" id="stock" name="stock" required>
+                    </div>
+            
+                    <!-- VIP Requirement -->
+                    <div class="form-group mb-3">
+                      <label for="vipRequirement" class="form-label">VIP Requirement:</label>
+                      <input class="form-control" type="text" id="vipRequirement" name="vipRequirement" value="1" required>
+                    </div>
+            
+                    <!-- Size Options -->
+                    <div class="form-group mb-4">
+                      <label for="sizeOptions" class="form-label">Size Options:</label>
+                      <input class="form-control" type="text" id="sizeOptions" name="sizeOptions">
+                    </div>
+            
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
+            
 
       </div>
     </main>
