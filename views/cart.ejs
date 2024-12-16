@@ -72,6 +72,9 @@
       Total: $<%= totalCost.toFixed(2) %>
     </div>
 
+    <!-- PayPal button container -->
+    <div id="paypal-button-container"></div>
+
     <!-- Actions: Place Order and Continue Shopping -->
     <div class="cart-actions">
       <form action="/users/cart/place-order" method="post">
@@ -79,7 +82,58 @@
       </form>
       <a href="/" class="btn btn-primary">Continue Shopping</a>
     </div>
-
   </main>
+
+  <!-- PayPal SDK script -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AbqAGEQazItY88IShmgn0ayvVIvWSGcCgyPBRGHbhiA-lqnkgZ6sVx2w9cjZsS1xPMtj3utJ5nlD31Cu&currency=USD"></script>
+
+  <script>
+    // Initialize the PayPal button
+    paypal.Buttons({
+      createOrder: async (data, actions) => {
+        // Make the request to create an order with the total price
+        const response = await fetch('/api/payments/create-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount: '<%= totalCost.toFixed(2) %>' })  // Use the dynamic total cost here
+        });
+        if (!response.ok) {
+          console.error('Error creating order:', await response.text());
+          alert('Failed to create order. Please try again.');
+          return;
+        }
+        const orderData = await response.json();
+        
+        // Return the order ID to PayPal
+        return orderData.id;
+      },
+      onApprove: async (data, actions) => {
+        // Capture the payment after approval
+        const response = await fetch('/api/payments/capture-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId: data.orderID })
+        });
+        if (!response.ok) {
+          console.error('Error capturing order:', await response.text());
+          alert('Payment capture failed. Please contact support.');
+          return;
+        }
+        const captureData = await response.json();
+
+        // Redirect to the order success page
+        window.location.href = `/order-success?orderId=${captureData.orderId}`;
+      },
+      onError: (err) => {
+        // Handle any errors that occur during the payment process
+        console.error('PayPal Error:', err);
+        alert('Payment failed. Please try again.');
+      }
+    }).render('#paypal-button-container');  // Render the button inside the specified container
+  </script>
 </body>
 </html>

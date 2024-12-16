@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../components/header') %>
+  <style>
+    .order-success {
+      margin-top: 20px;
+    }
+
+    .order-details, .payer-info, .shipping-info {
+      margin-bottom: 20px;
+    }
+
+    .order-section {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+
+    .order-section h2 {
+      margin-top: 0;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .btn-container .btn {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <%- include('../components/navbar') %>
+  <main class="container mt-5">
+    <h1>Order Success</h1>
+    <p class="order-success">Your payment was successful! Here are the details of your order:</p>
+
+    <!-- Order Details Section -->
+    <div class="order-section order-details">
+      <h2>Order Details</h2>
+      <p><strong>Order ID:</strong> 9KE219907N788540H</p>
+      <p><strong>Status:</strong> COMPLETED</p>
+      <p><strong>Amount:</strong> $20.00</p>
+    </div>
+
+    <!-- Payer Information Section -->
+    <div class="order-section payer-info">
+      <h2>Payer Information</h2>
+      <p><strong>Name:</strong> John Doe</p>
+      <p><strong>Email:</strong> sb-co4743i34939850@personal.example.com</p>
+      <p><strong>Country:</strong> US</p>
+    </div>
+
+    <!-- Shipping Information Section -->
+    <div class="order-section shipping-info">
+      <h2>Shipping Information</h2>
+      <p><strong>Recipient:</strong> John Doe</p>
+      <p><strong>Address:</strong> 1 Main St, San Jose, CA, 95131</p>
+      <p><strong>Country:</strong> US</p>
+    </div>
+
+    <!-- Buttons: Continue Shopping -->
+    <div class="btn-container">
+      <a href="/" class="btn btn-primary">Continue Shopping</a>
+    </div>
+  </main>
+</body>
+</html>
