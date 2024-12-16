@@ -28,6 +28,7 @@ app.use(session({
 app.use((req, res, next) => {
   res.locals.loggedIn = req.session.loggedIn || false; 
   res.locals.username = req.session.username || null; 
+  res.locals.isAdmin = req.session.isAdmin || false;
   next();
 });
 

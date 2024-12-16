@@ -1,47 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <%- include('../components/header') %>
 </head>
+
 <body>
   <%- include('../components/navbar') %>
-  <main class="container mt-5">
-    <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
+    <main class="container mt-5">
+      <h1 class="text-center mb-4">Welcome to SWE Online Store</h1>
 
-    <!-- Category Filter Links -->
-    <div class="text-center mb-4">
-      <a href="/" class="btn btn-link">All</a>
-      <span class="mx-2 font-weight-bold">/</span>
-      <a href="/?category=Prints" class="btn btn-link">Prints</a>
-      <span class="mx-2 font-weight-bold">/</span>
-      <a href="/?category=CD" class="btn btn-link">CD</a>
-    </div>
-    
+      <!-- Category Filter Links -->
+      <div class="text-center mb-4">
+        <a href="/" class="btn btn-link">All</a>
+        <span class="mx-2 font-weight-bold">/</span>
+        <a href="/?category=Prints" class="btn btn-link">Prints</a>
+        <span class="mx-2 font-weight-bold">/</span>
+        <a href="/?category=CD" class="btn btn-link">CD</a>
+      </div>
 
-    <!-- Product Grid -->
-    <div class="row">
-      <% products.forEach(product => { %>
-        <div class="col-md-4 mb-4">
-          <a href="/product/<%= product.productID %>" class="text-decoration-none">
-            <div class="card h-100 shadow-sm">
-              <!-- Image -->
-              <img 
-                src="/media/<%= product.productName %>.png" 
-                class="card-img-top" 
-                alt="<%= product.productName %>" 
-                style="object-fit: cover; height: 200px;">
 
-              <div class="card-body text-center">
-                <!-- Product Details -->
-                <h5 class="card-title"><%= product.productName %></h5>
-                <p class="card-text text-muted"><%= product.description %></p>
-                <p class="card-text"><strong>$<%= product.price %></strong></p>
+      <!-- Product Grid -->
+      <div class="row">
+        <% products.forEach(product=> { %>
+          <div class="col-md-4 mb-4">
+            <a href="/product/<%= product.productID %>" class="text-decoration-none">
+              <div class="card h-100 shadow-sm">
+                <!-- Image -->
+                <img src="/media/<%= product.productName %>.png" class="card-img-top" alt="<%= product.productName %>"
+                  style="object-fit: cover; height: 200px;">
+
+                <div class="card-body text-center">
+                  <!-- Product Details -->
+                  <h5 class="card-title">
+                    <%= product.productName %>
+                  </h5>
+                  <p class="card-text text-muted">
+                    <%= product.description %>
+                  </p>
+                  <p class="card-text"><strong>$<%= product.price %></strong></p>
+                </div>
+
+                <!-- Delete Button -->
+                <div style="<%= !isAdmin ? "display: none;" : "" %>">
+                  <form action="/delete/<%= product.productID %>" method="POST">
+                    <button class="btn-cancel mb-4" type="submit">Delete</button>
+                  </form>
+                </div>
+
+              </div>
+            </a>
+          </div>
+          <% }); %>
+
+            <!-- Add Product Form -->
+            <div style="<%= !isAdmin ? 'display: none;' : '' %>" class="container mt-4">
+              <div class="row justify-content-center">
+                <div class="col-md-4">
+                  <h2 class="mb-4 text-center">Add a New Product</h2>
+                  <form action="/add-product" method="POST">
+                    <!-- Product Name -->
+                    <div class="form-group mb-3;">
+                      <label for="productName" class="form-label">Product Name:</label>
+                      <input class="form-control" type="text" id="productName" name="productName" required>
+                    </div>
+            
+                    <!-- Description -->
+                    <div class="form-group mb-3">
+                      <label for="description" class="form-label">Description:</label>
+                      <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                    </div>
+            
+                    <!-- Category -->
+                    <div class="form-group mb-3">
+                      <label for="category" class="form-label">Category:</label>
+                      <input class="form-control" type="text" id="category" name="category" required>
+                    </div>
+            
+                    <!-- Price -->
+                    <div class="form-group mb-3">
+                      <label for="price" class="form-label">Price:</label>
+                      <input class="form-control" type="number" id="price" name="price" step="0.01" required>
+                    </div>
+            
+                    <!-- Stock -->
+                    <div class="form-group mb-3">
+                      <label for="stock" class="form-label">Stock:</label>
+                      <input class="form-control" type="number" id="stock" name="stock" required>
+                    </div>
+            
+                    <!-- VIP Requirement -->
+                    <div class="form-group mb-3">
+                      <label for="vipRequirement" class="form-label">VIP Requirement:</label>
+                      <input class="form-control" type="text" id="vipRequirement" name="vipRequirement" value="1" required>
+                    </div>
+            
+                    <!-- Size Options -->
+                    <div class="form-group mb-4">
+                      <label for="sizeOptions" class="form-label">Size Options:</label>
+                      <input class="form-control" type="text" id="sizeOptions" name="sizeOptions">
+                    </div>
+            
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
-          </a>
-        </div>
-      <% }); %>
-    </div>
-  </main>
+            
+
+      </div>
+    </main>
 </body>
 </html>

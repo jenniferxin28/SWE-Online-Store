@@ -39,7 +39,31 @@ router.get('/profile', requireLogin, (req, res) => {
   });
 });
 
+router.post('/cancel', (req, res) => {
+  const { orderID } = req.body;
 
+  console.log('Received orderID:', orderID); // Debug: Check the incoming data
+
+  // Query to cancel a single order
+  const query = `
+    UPDATE OrderTable 
+    SET status = 'Cancelled'
+    WHERE orderID = ? AND status = 'Pending';
+  `;
+
+  db.query(query, [orderID], (err, result) => {
+    if (err) {
+      console.error('SQL Error:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: 'Order cancelled successfully.' });
+    } else {
+      res.status(400).json({ success: false, message: 'Order cannot be cancelled. Either it is not pending or does not exist.' });
+    }
+  });
+});
 
 // cart page (protected)
 router.get('/cart', requireLogin, (req, res) => {
@@ -74,6 +98,13 @@ router.post('/cart/add', requireLogin, (req, res) => {
   const { productID, quantity } = req.body;
   const userID = req.session.userID;
 
+  if (!productID || !quantity) {
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      return res.status(400).json({ error: 'Product ID and quantity are required' });
+    }
+    return res.status(400).send('Product ID and quantity are required');
+  }
+
   const addQuery = `
     INSERT INTO ShoppingCartContains (cartID, productID, quantity)
     VALUES ((SELECT cartID FROM ShoppingCart WHERE userID = ?), ?, ?)
@@ -82,11 +113,19 @@ router.post('/cart/add', requireLogin, (req, res) => {
   db.query(addQuery, [userID, productID, quantity], (err) => {
     if (err) {
       console.error('Error adding to cart:', err);
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(500).json({ error: 'Failed to add to cart' });
+      }
       return res.status(500).send('Failed to add to cart');
+    }
+
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      return res.status(200).json({ message: 'Product added to cart successfully' });
     }
     res.redirect('/users/cart');
   });
 });
+
 
 router.post('/cart/remove', requireLogin, (req, res) => {
   const { productID } = req.body;

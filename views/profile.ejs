@@ -35,11 +35,16 @@
               <td><%= order.status %></td>
               <td>
                 <% if (order.status === 'Pending') { %>
-                  <button class="btn-cancel">Cancel</button>
+                  <form onsubmit="return cancelOrder(event, '<%= order.orderID %>');">
+                    <button type="submit" class="btn-cancel">Cancel</button>
+                  </form>
+                  
+                  
                 <% } else { %>
                   <span class="text-muted">N/A</span>
                 <% } %>
               </td>
+              
             </tr>
           <% }) %>
         </tbody>
@@ -48,5 +53,40 @@
       <p>You have no orders at the moment.</p>
     <% } %>
   </div>
+
+  <!-- Add script here -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cancelButtons = document.querySelectorAll('.btn-cancel');
+
+      cancelButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+          const orderID = event.target.closest('tr').querySelector('td:first-child').textContent;
+
+          fetch('/users/cancel', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderID }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert(data.message);
+                // Reload or update the table dynamically
+                location.reload();
+              } else {
+                alert(data.message);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('An error occurred. Please try again later.');
+            });
+        });
+      });
+    });
+  </script>
 </body>
 </html>
